@@ -1,0 +1,24 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t yavoritomov/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true yavoritomov/react-test npm test
+
+after_success:
+  - docker build -t yavoritomov/multi-client ./client
+  - docker build -t yavoritomov/multi-nginx ./nginx
+  - docker build -t yavoritomov/multi-server ./server
+  - docker build -t yavoritomov/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push yavoritomov/multi-client
+  - docker push yavoritomov/multi-nginx
+  - docker push yavoritomov/multi-server
+  - docker push yavoritomov/multi-worker
