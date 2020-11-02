@@ -1,0 +1,35 @@
+{
+    "AWSEBDockerrunVersion": 2,
+    "containerDefinitions": [
+      {
+        "name": "client",
+        "image": "yavortomov/multi-client",
+        "hostname": "client",
+        "essential": false 
+      },
+      {
+        "name": "server",
+        "image": "yavortomov/multi-server",
+        "hostname": "api",
+        "essential": false    
+      },
+      {
+        "name": "worker",
+        "image": "yavortomov/multi-worker",
+        "hostname": "worker",
+        "essential": false 
+      },
+      {
+        "name": "nginx",
+        "image": "yavortomov/multi-nginx",
+        "essential": true,
+        "portMappings": [
+            {
+                "hostPort": 80,
+                "containerPort": 80
+            }
+        ],
+        "links": ["client", "server"]
+      }
+    ]
+}
